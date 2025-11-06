@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 
@@ -7,7 +7,7 @@ class ProductBase(BaseModel):
     prod_id: str
     name: str
     description: Optional[str] = None
-    company_id: int
+    brand_id: int
     category: Optional[str] = None
     sub_category: Optional[str] = None
     unit_of_measure: Optional[str] = None
@@ -15,6 +15,7 @@ class ProductBase(BaseModel):
     status: Optional[bool] = True
     expiry_in_months: Optional[int] = None
     upc: Optional[str] = None
+    sku: str = Field(..., pattern=r'^[A-Za-z0-9]+$', description="Alphanumeric SKU only")
 
 
 # Schema for creating a new product

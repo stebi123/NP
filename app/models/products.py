@@ -8,7 +8,7 @@ class Product(Base):
     prod_id = Column(String(100), unique=True, nullable=False)
     name = Column(String(255), nullable=False)
     description = Column(String(500))
-    company_id = Column(Integer, nullable=False)
+    brand_id = Column(Integer, nullable=False)
     category = Column(String(100))
     sub_category = Column(String(100))
     unit_of_measure = Column(String(50))
@@ -16,3 +16,4 @@ class Product(Base):
     status = Column(Boolean, default=True)
     expiry_in_months = Column(Integer)
     upc = Column(String(100), unique=True)
+    sku = Column(String(50), unique=True, nullable=False)
