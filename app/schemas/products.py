@@ -8,14 +8,14 @@ class ProductBase(BaseModel):
     name: str
     description: Optional[str] = None
     brand_id: int
-    category: Optional[str] = None
-    sub_category: Optional[str] = None
+    category_id: int
+    subcategory_id: int
     unit_of_measure: Optional[str] = None
     weight: Optional[float] = None
     status: Optional[bool] = True
     expiry_in_months: Optional[int] = None
     upc: Optional[str] = None
-    sku: str = Field(..., pattern=r'^[A-Za-z0-9]+$', description="Alphanumeric SKU only")
+    sku: str = Field(..., pattern=r'^[A-Za-z0-9-]+$', description="Alphanumeric SKU")
 
 
 # Schema for creating a new product

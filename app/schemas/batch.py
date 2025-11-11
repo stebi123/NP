@@ -1,14 +1,15 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from typing import Optional
 from datetime import date
 
 class BatchBase(BaseModel):
     batch_no: str
-    prod_id: str
-    manufacture_date: date
-    quantity: int
-    expiry_date: date
-    status: bool = True
-    sku: str = Field(..., pattern=r'^[A-Za-z0-9]+$', description="Alphanumeric SKU only")
+    product_id: int
+    manufacture_date: Optional[date] = None
+    expiry_date: Optional[date] = None
+    quantity: Optional[int] = None
+    status: Optional[bool] = True
+    sku: Optional[str] = None
 
 class BatchCreate(BatchBase):
     pass
@@ -17,4 +18,9 @@ class BatchResponse(BatchBase):
     id: int
 
     class Config:
-        from_attributes = True  # replaces orm_mode in Pydantic v2
+        from_attributes = True
+  # replaces orm_mode in Pydantic v2
+
+
+# prod_id → internal code for display
+# product_id → FK to the product table

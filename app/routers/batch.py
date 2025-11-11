@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.models import batch as models
+from app.models.products import Product
 from app.schemas import batch as schemas
 from app.core.database import get_db
 from app.core.security import get_current_user
@@ -24,9 +25,9 @@ def create_batches(
     try:
         for batch in batches:
             # Optional: Check if product exists before linking
-            product = db.query(models.Product).filter_by(prod_id=batch.prod_id).first()
+            product = db.query(Product).filter(Product.id == batch.product_id).first()
             if not product:
-                raise HTTPException(status_code=400, detail=f"Product ID '{batch.prod_id}' not found")
+                raise HTTPException(status_code=400, detail=f"Product ID '{batch.product_id}' not found")
 
             new_batch = models.Batch(**batch.dict())
             db.add(new_batch)
