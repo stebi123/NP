@@ -35,14 +35,53 @@ def get_products(db: Session = Depends(get_db), current_user: dict = Depends(get
     return products
 
 
-# ✅ Get single product by ID
-@router.get("/{product_id}", response_model=schemas.ProductResponse)
-def get_product(product_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
-    return product
+# # ✅ Get single product by ID
+# @router.get("/{product_id}", response_model=schemas.ProductResponse)
+# def get_product(product_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+#     product = db.query(models.Product).filter(models.Product.id == product_id).first()
+#     if not product:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+#     return product
 
+# ✅ Get single product or filtered search
+@router.get("/filter", response_model=List[schemas.ProductResponse])
+def get_products(
+    prod_id: str = None,
+    brand_id: int = None,
+    name: str = None,
+    category_id: int = None,
+    subcategory_id: int = None,
+    sku: str = None,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Retrieve products with flexible filters.
+    You can query by product_id, prod_id, brand_id, name, category_id, subcategory_id, or sku.
+    Example: /products/filter?brand_id=1&category_id=2
+    """
+
+    query = db.query(models.Product)
+
+    if prod_id:
+        query = query.filter(models.Product.prod_id == prod_id)
+    if brand_id:
+        query = query.filter(models.Product.brand_id == brand_id)
+    if name:
+        query = query.filter(models.Product.name.ilike(f"%{name}%"))
+    if category_id:
+        query = query.filter(models.Product.category_id == category_id)
+    if subcategory_id:
+        query = query.filter(models.Product.subcategory_id == subcategory_id)
+    if sku:
+        query = query.filter(models.Product.sku == sku)
+
+    products = query.all()
+
+    if not products:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No products found matching criteria")
+
+    return products
 
 # ✅ Update product by ID
 @router.put("/{product_id}", response_model=schemas.ProductResponse)
