@@ -44,18 +44,15 @@ Fully traceable from **incoming goods → QC → batch → pallet → sales**.
 
 # 🏗️ **Architecture Diagram**
 
-```mermaid
 flowchart LR
-    A[Staging (QC)] --> B[Batch Creation]
+    A[Staging QC] --> B[Batch Creation]
     B --> C[Pallet Allocation]
     C --> D[Inventory Database]
     D --> E[Sales API]
-    E --> F[FIFO / FEFO Deduction]
+    E --> F[FIFO / FEFO Logic]
     F --> G[Auto Pallet Cleaner]
     G --> H[Reports & Traceability]
-📘 ER Diagram
-mermaid
-Copy code
+
 erDiagram
     PRODUCT ||--|{ BATCH : contains
     BATCH ||--|{ BATCH_PALLET : stored_in
@@ -65,6 +62,7 @@ erDiagram
     PRICE ||--|| PRODUCT : price_for
     WAREHOUSE ||--|{ PALLET : located_in
     WAREHOUSE ||--|{ PRODUCT : available_in
+
 🧰 Tech Stack
 Backend
 FastAPI
