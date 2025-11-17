@@ -36,7 +36,7 @@ CREATE TABLE `batch` (
   KEY `product_id` (`product_id`),
   KEY `ix_batch_id` (`id`),
   CONSTRAINT `batch_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,6 @@ CREATE TABLE `batch` (
 
 LOCK TABLES `batch` WRITE;
 /*!40000 ALTER TABLE `batch` DISABLE KEYS */;
-INSERT INTO `batch` VALUES (1,'BATCH-001',4,'2025-10-25','2026-10-25',50,1,'WHEAT-10KG-001'),(2,'BATCH-002',5,'2025-10-20','2026-10-20',80,1,'SUGAR-5KG-002');
 /*!40000 ALTER TABLE `batch` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,15 +57,15 @@ DROP TABLE IF EXISTS `batch_pallet`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `batch_pallet` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `batch_no` varchar(100) DEFAULT NULL,
-  `pallet_id` int DEFAULT NULL,
+  `batch_id` int NOT NULL,
+  `pallet_id` int NOT NULL,
   `quantity_left` int DEFAULT NULL,
   `stored_on` datetime DEFAULT (now()),
   PRIMARY KEY (`id`),
-  KEY `batch_no` (`batch_no`),
+  KEY `batch_id` (`batch_id`),
   KEY `pallet_id` (`pallet_id`),
   KEY `ix_batch_pallet_id` (`id`),
-  CONSTRAINT `batch_pallet_ibfk_1` FOREIGN KEY (`batch_no`) REFERENCES `batch` (`batch_no`),
+  CONSTRAINT `batch_pallet_ibfk_1` FOREIGN KEY (`batch_id`) REFERENCES `batch` (`id`),
   CONSTRAINT `batch_pallet_ibfk_2` FOREIGN KEY (`pallet_id`) REFERENCES `pallet` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -93,7 +92,7 @@ CREATE TABLE `brand` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `ix_brand_id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +101,6 @@ CREATE TABLE `brand` (
 
 LOCK TABLES `brand` WRITE;
 /*!40000 ALTER TABLE `brand` DISABLE KEYS */;
-INSERT INTO `brand` VALUES (3,'24 Mantra'),(2,'Fortune'),(1,'NatureFresh'),(4,'Patanjali'),(6,'string'),(5,'Tata Sampann'),(7,'test');
 /*!40000 ALTER TABLE `brand` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +117,7 @@ CREATE TABLE `category` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `ix_category_id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,7 +126,6 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (2,'Beverages'),(1,'Groceries'),(5,'Household Items'),(4,'Personal Care'),(3,'Snacks');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -155,6 +152,34 @@ CREATE TABLE `company` (
 LOCK TABLES `company` WRITE;
 /*!40000 ALTER TABLE `company` DISABLE KEYS */;
 /*!40000 ALTER TABLE `company` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `consumer`
+--
+
+DROP TABLE IF EXISTS `consumer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `consumer` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
+  `company` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_consumer_id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `consumer`
+--
+
+LOCK TABLES `consumer` WRITE;
+/*!40000 ALTER TABLE `consumer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `consumer` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -185,6 +210,36 @@ CREATE TABLE `pallet` (
 LOCK TABLES `pallet` WRITE;
 /*!40000 ALTER TABLE `pallet` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pallet` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `price`
+--
+
+DROP TABLE IF EXISTS `price`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `price` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int NOT NULL,
+  `mrp` float NOT NULL,
+  `mwp` float NOT NULL,
+  `effective_from` datetime DEFAULT (now()),
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  KEY `ix_price_id` (`id`),
+  CONSTRAINT `price_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `price`
+--
+
+LOCK TABLES `price` WRITE;
+/*!40000 ALTER TABLE `price` DISABLE KEYS */;
+/*!40000 ALTER TABLE `price` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -219,7 +274,7 @@ CREATE TABLE `product` (
   CONSTRAINT `product_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`id`),
   CONSTRAINT `product_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`),
   CONSTRAINT `product_ibfk_3` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategory` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -228,7 +283,6 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (4,'PROD001','Organic Wheat Flour','High-quality organic wheat flour, 10kg pack',1,1,1,'kg',10,1,12,'8901234567890','WHEAT-10KG-001'),(5,'PROD002','Refined Sugar','Premium refined white sugar, 5kg pack',1,1,2,'kg',5,1,24,'8901234567891','SUGAR-5KG-002'),(6,'PROD003','Sunflower Cooking Oil','Pure sunflower oil, 1L bottle',2,1,3,'L',1,1,18,'8901234567892','OIL-1L-003');
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,6 +309,44 @@ CREATE TABLE `role` (
 LOCK TABLES `role` WRITE;
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sales`
+--
+
+DROP TABLE IF EXISTS `sales`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sales` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `batch_id` int NOT NULL,
+  `pallet_id` int DEFAULT NULL,
+  `product_id` int NOT NULL,
+  `consumer_id` int NOT NULL,
+  `quantity_sold` int NOT NULL,
+  `sale_price` float DEFAULT NULL,
+  `sale_timestamp` datetime DEFAULT (now()),
+  PRIMARY KEY (`id`),
+  KEY `batch_id` (`batch_id`),
+  KEY `pallet_id` (`pallet_id`),
+  KEY `product_id` (`product_id`),
+  KEY `consumer_id` (`consumer_id`),
+  KEY `ix_sales_id` (`id`),
+  CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`batch_id`) REFERENCES `batch` (`id`),
+  CONSTRAINT `sales_ibfk_2` FOREIGN KEY (`pallet_id`) REFERENCES `pallet` (`id`),
+  CONSTRAINT `sales_ibfk_3` FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+  CONSTRAINT `sales_ibfk_4` FOREIGN KEY (`consumer_id`) REFERENCES `consumer` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sales`
+--
+
+LOCK TABLES `sales` WRITE;
+/*!40000 ALTER TABLE `sales` DISABLE KEYS */;
+/*!40000 ALTER TABLE `sales` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -303,7 +395,7 @@ CREATE TABLE `subcategory` (
   KEY `category_id` (`category_id`),
   KEY `ix_subcategory_id` (`id`),
   CONSTRAINT `subcategory_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -312,7 +404,6 @@ CREATE TABLE `subcategory` (
 
 LOCK TABLES `subcategory` WRITE;
 /*!40000 ALTER TABLE `subcategory` DISABLE KEYS */;
-INSERT INTO `subcategory` VALUES (1,'Flours',1),(2,'Sugars',1),(3,'Oils',1),(4,'Spices',1),(5,'Soaps',4);
 /*!40000 ALTER TABLE `subcategory` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -346,7 +437,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'qqqq','q@gmail.com','$argon2id$v=19$m=65536,t=3,p=4$fW/NGUPIGWOsdW7NWStFiA$mWmRjZaIbkJBsNoE3BIw1dQLyBGVT9KOKFBpj+3BzU8','2025-11-11 22:47:02',NULL,NULL,1,'user');
+INSERT INTO `users` VALUES (1,'123','123','$argon2id$v=19$m=65536,t=3,p=4$tZbyvncuZWztXYvReo8Rwg$OWYtI3H8T5G9K7GwlIi7Ad3XVsyct9BrTDTpxKE/IsM','2025-11-18 00:26:10',NULL,NULL,1,'user');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,4 +476,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-12 23:15:34
+-- Dump completed on 2025-11-18  0:30:41
