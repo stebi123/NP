@@ -1,73 +1,68 @@
-📦 Warehouse Inventory Management System
-Built with FastAPI, SQLAlchemy, MySQL
+🏭 Warehouse Inventory Management System
+Powered by FastAPI • SQLAlchemy • MySQL
 
-This project is a complete warehouse inventory management system that handles:
+A complete backend system that manages:
 
-Product lifecycle (product → batch → pallet → sales)
+✔ Product lifecycle
+✔ Staging (QC) workflow
+✔ Batch management
+✔ Pallet allocation
+✔ FIFO / FEFO stock deduction
+✔ Consumer tracking
+✔ Sales tracking
+✔ Pricing system
+✔ Warehouse-level inventory
 
-Staging (QC) process before goods enter inventory
+✨ Features
+📌 Inventory Management
 
-Stock allocation to pallets
+Products → Batches → Pallets → Sales
 
-FIFO / FEFO sales deduction
+Real-time stock tracking
 
-Consumer tracking
+Prevents negative inventory
 
-Pricing system
+Auto-remove empty pallet allocations
 
-Warehouse-level inventory control
+🧪 Staging (QC) Flow
 
-It provides full traceability from incoming goods → QC → batch creation → pallet allocation → sales.
+Goods arrive → placed in staging
 
-🚀 Tech Stack
+QC approval required before entering inventory
+
+Ensures clean traceability
+
+🎯 Sales Engine
+
+FIFO (First In First Out) support
+
+FEFO (First Expire First Out) support
+
+Multi-pallet quantity deduction
+
+Automatic batch & pallet adjustments
+
+👥 Consumer Management
+
+Stores consumer details (name, contact, company, address)
+
+Links each sale to a consumer
+
+💰 Pricing Module
+
+MRP & MWP per product
+
+Supports historical price updates
+
+🛠 Tech Stack
 Layer	Technology
 Backend	FastAPI
 ORM	SQLAlchemy
-Database	MySQL
+DB	MySQL
 Auth	JWT
-API Format	REST JSON
-Testing	Any REST client (Postman, ThunderClient, etc.)
-📑 Table of Contents
-
-Prerequisites
-
-Project Architecture
-
-Data Flow Overview
-
-Database Schema Overview
-
-Core Logic Explained
-
-API Flow Examples
-
-FIFO / FEFO Logic
-
-Error Handling & Validation
-
-Future Enhancements
-
-🛠 Prerequisites
-
-Python 3.10+
-
-MySQL Server running locally
-
-Create a database:
-
-CREATE DATABASE np;
-
-
-Install dependencies:
-
-pip install -r requirements.txt
-
-
-Start the server:
-
-uvicorn app.main:app --reload
-
-🏗 Project Architecture
+Format	REST JSON
+Testing Tools	Postman / ThunderClient
+📁 Project Structure
 app/
  ├── core/
  │    ├── database.py
@@ -84,181 +79,131 @@ app/
  │    ├── staging.py
  │    └── warehouse.py
  ├── routers/
- │    ├── auth.py
- │    ├── batch.py
- │    ├── batch_pallet.py
- │    ├── consumer.py
- │    ├── pallet.py
- │    ├── price.py
- │    ├── products.py
- │    ├── sales.py
- │    ├── staging.py
- │    └── warehouse.py
  ├── schemas/
  └── main.py
 
-🔄 Data Flow Overview
-1️⃣ Staging → QC
+🔄 System Flow (High-Level)
+Goods Arrive
+    ↓
+Staging → QC
+    ↓ (QC pass)
+Create Batch
+    ↓
+Assign to Pallets
+    ↓
+Make Sale (FIFO / FEFO)
+    ↓
+Auto-deduct from pallets + batch
 
-Goods arrive → Stored temporarily in the staging table.
-QC is performed.
+🧩 Core Logic Explained
+🟦 1. Staging → QC
 
-If FAIL → goods rejected.
+Goods first enter staging.
+QC must be marked passed before a batch can be created.
 
-If PASS → moved to Batch creation.
+🟨 2. Batch Creation
 
-2️⃣ Batch Creation
+Batch includes:
 
-A batch represents:
+batch_no
 
-manufacturing date
+manufacture_date
 
-expiry date
-
-batch number
+expiry_date
 
 total quantity
 
-3️⃣ Assign Batches to Pallets
+product reference
 
+🟥 3. Pallet Allocation
+
+Batch quantity can be split across pallets:
 Example:
 
-Batch B1 has 100 units
+Pallet	Qty
+A	60
+B	40
 
-Pallet A → 60 units
+Stored in batch_pallet.
 
-Pallet B → 40 units
+🟩 4. Sales Engine (FIFO / FEFO)
+FIFO = stock stored earlier is sold first
 
-Stored in batch_pallet table.
-
-4️⃣ Sales (FIFO / FEFO Deduction)
-
-On sale:
-
-System selects pallets based on algorithm:
-
-FIFO → oldest stored pallet
-
-FEFO → nearest expiry batch
-
-Deducts from batch_pallet.quantity_left
-
-Deducts from batch.quantity
-
-Creates Sales rows
-
-Removes pallet link if quantity becomes 0
-
-🗄 Database Schema Overview
-Main Tables
-Table	Purpose
-product	Product master data
-warehouse	Warehouse locations
-staging	Goods arrival before QC
-batch	Batch metadata + quantity
-pallet	Pallet metadata
-batch_pallet	Maps batch → pallet with quantity_left
-consumer	Customer info
-price	MRP, MWP with historical dates
-sales	Recorded sales history
-🧠 Core Logic Explained
-Staging & QC
-
-Goods MUST pass QC before entering inventory.
-QC creates clean traceability between arrival → batch.
-
-Batch → Pallet Mapping
-
-A batch can be split into multiple pallets.
-Each pallet stores:
-
-quantity_left
-
-stored_on timestamp
-This timestamp is key for FIFO deduction.
-
-Sales Deduction Logic (EXTREMELY IMPORTANT)
-FIFO (First-In-First-Out)
-
-Select pallets ordered by:
+Sorted by:
 
 stored_on ASC
 
-FEFO (First-Expire-First-Out)
+FEFO = stock expiring earlier is sold first
 
-Select pallets ordered by:
+Sorted by:
 
-batch.expiry_date ASC
+expiry_date ASC
 
-Deduction Loop
+Deduction Loop Automatically:
 
-For each selected pallet:
+Deduct from batch_pallet.quantity_left
 
-deduct = min(pallet.quantity_left, required_quantity)
-pallet.quantity_left -= deduct
-batch.quantity -= deduct
-create sales row with deduct value
-if pallet.quantity_left == 0:
-    delete pallet entry from batch_pallet
+Deduct from batch.quantity
 
-🧪 API Flow Examples (Step-by-Step)
+Create multiple sales rows (if needed)
+
+Remove pallet link if empty
+
+🔌 API Testing Flow (Sample)
 1️⃣ Create Warehouse
 POST /warehouse/
 {
-  "name": "Central Storage",
+  "name": "Main Warehouse",
   "location": "Cochin",
-  "address": "NH Bypass"
+  "address": "NH-47"
 }
 
 2️⃣ Create Product
 POST /products/
 {
-  "prod_id": "P-100",
+  "prod_id": "P100",
   "name": "Wheat Flour",
   "sku": "WF-10KG"
 }
 
-3️⃣ Staging (goods arrive)
+3️⃣ Staging Entry
 POST /staging/
 {
   "product_id": 1,
   "warehouse_id": 1
 }
 
-4️⃣ Mark QC Completion
+4️⃣ QC Approval
 PUT /staging/1/qc
 {
   "qc_done": true
 }
 
-5️⃣ Create a Batch
-POST /batch/
+5️⃣ Create Batch
+POST /batches/
 {
   "batch_no": "B1",
   "product_id": 1,
-  "manufacture_date": "2025-10-01",
-  "expiry_date": "2026-10-01",
+  "manufacture_date": "2025-01-01",
+  "expiry_date": "2026-01-01",
   "quantity": 100,
   "sku": "WF-10KG"
 }
 
 6️⃣ Create Pallets
-POST /pallet/
+POST /pallets/
 {
-  "pallet_id": "PALLET-A",
+  "pallet_id": "PAL-A",
   "warehouse_id": 1
 }
 
-
-and
-
-POST /pallet/
+POST /pallets/
 {
-  "pallet_id": "PALLET-B",
+  "pallet_id": "PAL-B",
   "warehouse_id": 1
 }
 
-7️⃣ Assign Batch to Pallets
+7️⃣ Allocate Quantity
 POST /batch_pallet/
 {
   "batch_id": 1,
@@ -273,10 +218,10 @@ POST /batch_pallet/
   "quantity_left": 40
 }
 
-8️⃣ Create Consumer
+8️⃣ Add Consumer
 POST /consumer/
 {
-  "name": "ABC Retail",
+  "name": "ABC Retailer",
   "phone": "9876543210"
 }
 
@@ -286,59 +231,33 @@ POST /sales/
   "product_id": 1,
   "consumer_id": 1,
   "quantity_sold": 70,
-  "sale_price": 425.0,
+  "sale_price": 450,
   "fifo": true
 }
 
-Internally:
+Backend does:
 
-60 deducted from pallet A
+✔ 60 from PAL-A
+✔ 10 from PAL-B
+✔ Auto remove empty PAL-A entry
+✔ Batch quantity becomes 30
+✔ Creates 2 sales rows
 
-10 deducted from pallet B
+🛡 Error Prevention
 
-pallet A entry deleted
+❌ Prevents negative stock
+❌ Prevents deleting sales (to avoid corruption)
+❌ Validates consumer, batch, pallet before sale
+❌ Validates QC before batch creation
 
-batch.quantity updated to 30
+🚀 Future Improvements
 
-2 sale rows created
+Sales return module
 
-⚠ Error Handling & Validation
+Warehouse transfer module
 
-Batch cannot go negative
+QR/Barcode inventory scanning
 
-Pallet cannot be assigned more than batch quantity
-
-Sale cannot exceed available stock
-
-QC must be done before batch creation
-
-Consumer must exist before sale
-
-Once sale happens → deletion disabled (to prevent stock corruption)
-
-🔮 Future Enhancements
-
-Return-to-supplier (for QC FAIL)
-
-Sales return / reverse stock movement
-
-Multi-warehouse transfers
-
-Barcode / QR integration
-
-Web dashboard analytics
+Admin analytics dashboard
 
 Pallet capacity validation
-
-User activity logging
-
-✅ Conclusion
-
-This repository creates a complete warehouse management backend with:
-
-✔ full stock traceability
-✔ FIFO/FEFO inventory logic
-✔ staging & QC
-✔ pallet-level distribution
-✔ clean sales deduction engine
-✔ consumer & pricing support
