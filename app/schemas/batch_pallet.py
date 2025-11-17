@@ -3,17 +3,16 @@ from typing import Optional
 from datetime import datetime
 
 class BatchPalletBase(BaseModel):
-    # matches your model that uses batch_no FK
-    batch_no: str
+    batch_id: int
     pallet_id: int
-    quantity_left: Optional[int] = None
-    stored_on: Optional[datetime] = None
+    quantity_left: int
 
 class BatchPalletCreate(BatchPalletBase):
     pass
 
 class BatchPalletResponse(BatchPalletBase):
     id: int
+    stored_on: datetime
 
     class Config:
         from_attributes = True

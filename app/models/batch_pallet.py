@@ -6,7 +6,7 @@ class BatchPallet(Base):
     __tablename__ = "batch_pallet"
 
     id = Column(Integer, primary_key=True, index=True)
-    batch_no = Column(String(100), ForeignKey("batch.batch_no"))
-    pallet_id = Column(Integer, ForeignKey("pallet.id"))
+    batch_id = Column(Integer, ForeignKey("batch.id"), nullable=False)
+    pallet_id = Column(Integer, ForeignKey("pallet.id"), nullable=False)
     quantity_left = Column(Integer)
     stored_on = Column(DateTime(timezone=True), server_default=func.now())
