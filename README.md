@@ -1,57 +1,113 @@
-🏭⚡ Warehouse Inventory Management System
-A Complete FastAPI + SQLAlchemy + MySQL Inventory & Sales Engine with FIFO/FEFO Logic
-<p align="center"> <img src="https://img.shields.io/badge/FastAPI-00A489?style=for-the-badge&logo=fastapi&logoColor=white"/> <img src="https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=python&logoColor=white"/> <img src="https://img.shields.io/badge/MySQL-00618A?style=for-the-badge&logo=mysql&logoColor=white"/> <img src="https://img.shields.io/badge/JWT%20Auth-Security-blueviolet?style=for-the-badge"/> <img src="https://img.shields.io/badge/Architecture-Clean%20MVC-orange?style=for-the-badge"/> </p> <p align="center"> <img width="800" src="https://raw.githubusercontent.com/github/explore/master/topics/warehouse/warehouse.png"/> </p>
-🌟 Overview
+<div align="center">
 
-This system is a complete warehouse lifecycle engine that manages:
+# 🏭⚡ **Warehouse Inventory Management System**  
+### *FastAPI + SQLAlchemy + MySQL — Complete Warehouse Engine with FIFO/FEFO Sales Logic*
 
-📦 Product → 🧪 Staging (QC) → 🔢 Batch → 📦 Pallet → 💰 Sales
+<br/>
 
-with full traceability.
+<p>
+  <img src="https://img.shields.io/badge/FastAPI-00A489?style=for-the-badge&logo=fastapi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MySQL-00618A?style=for-the-badge&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/JWT-Auth-blueviolet?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/REST-API-orange?style=for-the-badge"/>
+</p>
 
-Includes:
+<br/>
 
-✨ FIFO/FEFO auto-deduction
-✨ Pallet auto-cleaner
-✨ Price engine
-✨ Consumer tracking
-✨ Full warehouse stock visibility
-✨ Razor-sharp API design (FastAPI)
+📦 **Product → 🧪 QC/Staging → 🔢 Batch → 📦 Pallet → 💰 Sales**  
+A fully traceable, enterprise-ready warehouse flow.
 
-🔥 Top Features
-(Styled with Neon Icons & Modern Layout)
-Feature	Description
-🧪 Staging / QC Layer	Incoming goods undergo quality check before being accepted into inventory.
-🔢 Batch Management	Products grouped into batches with expiry, dates, quantity tracking.
-📦 Pallet Allocation	Automatic distribution of batch stock into pallets.
-🎯 FIFO / FEFO Sales Engine	Auto-deducts stock from the correct pallet & batch.
-🧻 Pallet Auto-Cleaner	When pallet stock hits zero → system auto-flags as empty.
-🧍 Consumer Tracking	Sales linked with full consumer info (phone, company, address).
-💸 Dynamic Pricing Engine	Per-product MRP / MWP with historical price support.
-🏬 Warehouse-Level Segregation	Every item strictly belongs to a warehouse.
-🏗️ Project Architecture (Visual Diagram)
+</div>
+
+---
+
+# 🌟 **Overview**
+
+This project is a **complete warehouse lifecycle management system** built with **FastAPI**, **SQLAlchemy**, and **MySQL**.
+
+It handles the entire flow:
+
+- 📦 **Product creation**
+- 🧪 **Staging (QC) before accepting stock**
+- 🔢 **Batch creation & expiry tracking**
+- 📦 **Pallet allocation & stock distribution**
+- 🎯 **Accurate FIFO/FEFO auto-deduction during sales**
+- 🧹 **Auto pallet cleaning — removes pallet link when empty**
+- 🧍 **Consumer tracking**
+- 💸 **Product pricing (MRP/MWP)**
+- 🏬 **Warehouse-level stock control**
+
+The system ensures **full traceability** from *incoming goods → QC → batch → pallet → sales*.
+
+---
+
+# 🚀 **Features at a Glance**
+
+### 🧪 **Staging (QC)**
+Incoming goods are first placed into **staging** for quality control before entering real inventory.
+
+### 🔢 **Batch Management**
+Each batch contains:
+- Quantity  
+- Expiry date  
+- Manufacturing date  
+- Linked product  
+
+### 📦 **Pallet Allocation**
+Distribute batch stock into multiple pallets.
+
+Example:  
+Batch of **100 units**  
+→ Pallet A (60)  
+→ Pallet B (40)
+
+### 🎯 **FIFO / FEFO Auto Deduction**
+During sales:
+- FIFO = First In First Out  
+- FEFO = First Expiry First Out  
+
+System automatically selects correct **batch + pallet**.
+
+### 🧹 **Auto Pallet Cleaner**
+When pallet stock reaches **0**, system automatically removes the pallet entry.
+
+### 🧍 **Consumer Tracking**
+Sales are linked to consumers:
+- name  
+- phone  
+- address  
+- company  
+
+### 💸 **Dynamic Pricing System**
+MRP, MWP — with optional **price history**.
+
+---
+
+# 🏗️ **Architecture Diagram**
+
+```mermaid
 flowchart LR
     A[🧪 Staging (QC)] --> B[🔢 Batch Creation]
     B --> C[📦 Pallet Allocation]
     C --> D[🗄 Inventory Database]
     D --> E[💰 Sales API]
-    E --> F[🔁 FIFO / FEFO Stock Deduction]
-    F --> G[🧹 Pallet Auto-Cleaner]
+    E --> F[🎯 FIFO / FEFO Deduction]
+    F --> G[🧹 Auto Pallet Cleaner]
     G --> H[📊 Reports & Traceability]
 
-🗄️ ER Diagram (Entity Relationship Model)
 erDiagram
-    PRODUCT ||--|{ BATCH : has
-    BATCH ||--|{ BATCH_PALLET : mapped_to
-    PALLET ||--|{ BATCH_PALLET : contains
-    SALES }|--|| PRODUCT : sells
-    SALES }|--|| CONSUMER : bought_by
-    PRICE ||--|| PRODUCT : priced_for
-    WAREHOUSE ||--|{ PRODUCT : stores
-    WAREHOUSE ||--|{ PALLET : holds
+    PRODUCT ||--|{ BATCH : contains
+    BATCH ||--|{ BATCH_PALLET : stored_in
+    PALLET ||--|{ BATCH_PALLET : holds
+    SALES }|--|| PRODUCT : sold_as
+    SALES }|--|| CONSUMER : purchased_by
+    PRICE ||--|| PRODUCT : price_for
+    WAREHOUSE ||--|{ PALLET : located_in
+    WAREHOUSE ||--|{ PRODUCT : available_in
 
-🛠️ Tech Stack
-💻 Backend
+🧰 Tech Stack
+Backend
 
 FastAPI
 
@@ -61,152 +117,93 @@ Pydantic v2
 
 Uvicorn
 
-🗄 Database
+Database
 
 MySQL
 
-Alembic (optional migrations)
+Security
 
-🔐 Auth
-
-JWT-Based Access Control
+JWT Authentication
 
 ⚙️ Prerequisites
 
-🚀 Install the basics:
+Install dependencies:
 
-Python 3.10+  
-MySQL Server  
 pip install -r requirements.txt
 
 
-Create your DB:
+Create database:
 
 CREATE DATABASE warehouse_system;
 
 
-Update .env:
+Create .env:
 
 DB_USER=root
 DB_PASS=yourpassword
-DB_NAME=warehouse_system
 DB_HOST=localhost
 DB_PORT=3306
+DB_NAME=warehouse_system
 JWT_SECRET=supersecret
 
-📦 Project Folder Structure
+🗂️ Folder Structure
 app/
  ├── core/
- │    ├── database.py
- │    ├── security.py
- │    ├── jwt.py
  ├── models/
- │    ├── products.py
- │    ├── batch.py
- │    ├── pallet.py
- │    ├── batch_pallet.py
- │    ├── consumer.py
- │    ├── price.py
- │    ├── sales.py
- │    ├── warehouse.py
- │    └── ...
  ├── routers/
- │    ├── products.py
- │    ├── batch.py
- │    ├── pallet.py
- │    ├── staging.py
- │    ├── price.py
- │    ├── sales.py
- │    └── ...
- └── main.py
+ ├── schemas/
+ ├── main.py
 
-🔥 System Workflow (Step-by-Step)
-1️⃣ Staging (QC Entry)
-
-Goods enter → marked as pending inspection.
-
-2️⃣ Batch Creation
-
-After QC approval → batches created with:
-✔ quantity
-✔ expiry
-✔ manufacturing date
-✔ product link
-
-3️⃣ Pallet Allocation
-
-Stock is placed into pallets.
-Example:
-100 units → pallet A (60) + pallet B (40)
-
-4️⃣ Sales Processing
-
-Sales request contains:
-
-product_id
-
-quantity
-
-consumer_id
-
-sale_price
-
-5️⃣ FIFO / FEFO Deduction
-
-System selects correct batch/pallet automatically:
-✔ first expiring batch (FEFO)
-✔ first created batch (FIFO)
-
-6️⃣ Auto-Clean Pallet
-
-If pallet reaches 0 stock → system marks it empty.
-
-🧪 Testing the Complete Flow
-👉 Create Product
+🔥 Complete Workflow
+1️⃣ Create Product
 
 POST /products/
 
-👉 Create Batch
+2️⃣ Send Goods to Staging
+
+POST /staging/
+
+3️⃣ Approve & Create Batch
 
 POST /batch/
 
-👉 Allocate to Pallet
+4️⃣ Allocate Batch to Pallet
 
 POST /batch_pallet/
 
-👉 Add Price
+5️⃣ Add Pricing
 
 POST /price/
 
-👉 Add Consumer
+6️⃣ Add Consumer
 
 POST /consumer/
 
-👉 Perform Sale
+7️⃣ Make a Sale
 
 POST /sales/
 
-System automatically:
-✔ Deducts correct stock
-✔ Logs sale
-✔ Updates pallet
-✔ Triggers auto-cleaner
+System will:
 
-🎯 Screenshots (Placeholder – add yours)
-/assets/screens/dashboard.png  
-/assets/screens/fifo_flow.png
-/assets/screens/sales_entry.png
+Deduct using FIFO/FEFO
+
+Update batch + pallet
+
+Auto clean empty pallets
 
 🚀 Future Enhancements
 
-Automated QR label printing
+AI-based stock forecasting
 
-Warehouse-to-warehouse transfers
+Barcode/QR label printing
 
-Stock forecasting (AI/ML)
+Warehouse-to-warehouse transfer
 
-Expiry alerts & batch recall
+Expiry alerts
 
-⭐ Show Some Love!
+<div align="center">
+⭐ If this project helps you, please give it a GitHub Star!
 
-If this project helped you, consider giving it a ⭐ on GitHub 😊
+Your support motivates future updates 😊
+
+</div> ```
