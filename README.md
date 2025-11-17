@@ -26,61 +26,19 @@ A fully traceable, enterprise-ready warehouse flow.
 
 This project is a **complete warehouse lifecycle management system** built with **FastAPI**, **SQLAlchemy**, and **MySQL**.
 
-It handles the entire flow:
+It handles:
 
-- 📦 **Product creation**
-- 🧪 **Staging (QC) before accepting stock**
-- 🔢 **Batch creation & expiry tracking**
-- 📦 **Pallet allocation & stock distribution**
-- 🎯 **Accurate FIFO/FEFO auto-deduction during sales**
-- 🧹 **Auto pallet cleaning — removes pallet link when empty**
-- 🧍 **Consumer tracking**
-- 💸 **Product pricing (MRP/MWP)**
-- 🏬 **Warehouse-level stock control**
+- 📦 Product creation  
+- 🧪 Staging/QC  
+- 🔢 Batch creation  
+- 📦 Pallet allocation  
+- 🎯 FIFO/FEFO sales deduction  
+- 🧹 Auto pallet cleanup  
+- 🧍 Consumer tracking  
+- 💸 Pricing (MRP, MWP)  
+- 🏬 Warehouse-level stock control  
 
-The system ensures **full traceability** from *incoming goods → QC → batch → pallet → sales*.
-
----
-
-# 🚀 **Features at a Glance**
-
-### 🧪 **Staging (QC)**
-Incoming goods are first placed into **staging** for quality control before entering real inventory.
-
-### 🔢 **Batch Management**
-Each batch contains:
-- Quantity  
-- Expiry date  
-- Manufacturing date  
-- Linked product  
-
-### 📦 **Pallet Allocation**
-Distribute batch stock into multiple pallets.
-
-Example:  
-Batch of **100 units**  
-→ Pallet A (60)  
-→ Pallet B (40)
-
-### 🎯 **FIFO / FEFO Auto Deduction**
-During sales:
-- FIFO = First In First Out  
-- FEFO = First Expiry First Out  
-
-System automatically selects correct **batch + pallet**.
-
-### 🧹 **Auto Pallet Cleaner**
-When pallet stock reaches **0**, system automatically removes the pallet entry.
-
-### 🧍 **Consumer Tracking**
-Sales are linked to consumers:
-- name  
-- phone  
-- address  
-- company  
-
-### 💸 **Dynamic Pricing System**
-MRP, MWP — with optional **price history**.
+Fully traceable from **incoming goods → QC → batch → pallet → sales**.
 
 ---
 
@@ -88,14 +46,16 @@ MRP, MWP — with optional **price history**.
 
 ```mermaid
 flowchart LR
-    A[🧪 Staging (QC)] --> B[🔢 Batch Creation]
-    B --> C[📦 Pallet Allocation]
-    C --> D[🗄 Inventory Database]
-    D --> E[💰 Sales API]
-    E --> F[🎯 FIFO / FEFO Deduction]
-    F --> G[🧹 Auto Pallet Cleaner]
-    G --> H[📊 Reports & Traceability]
-
+    A[Staging (QC)] --> B[Batch Creation]
+    B --> C[Pallet Allocation]
+    C --> D[Inventory Database]
+    D --> E[Sales API]
+    E --> F[FIFO / FEFO Deduction]
+    F --> G[Auto Pallet Cleaner]
+    G --> H[Reports & Traceability]
+📘 ER Diagram
+mermaid
+Copy code
 erDiagram
     PRODUCT ||--|{ BATCH : contains
     BATCH ||--|{ BATCH_PALLET : stored_in
@@ -105,10 +65,8 @@ erDiagram
     PRICE ||--|| PRODUCT : price_for
     WAREHOUSE ||--|{ PALLET : located_in
     WAREHOUSE ||--|{ PRODUCT : available_in
-
 🧰 Tech Stack
 Backend
-
 FastAPI
 
 SQLAlchemy ORM
@@ -118,92 +76,79 @@ Pydantic v2
 Uvicorn
 
 Database
-
 MySQL
 
 Security
-
 JWT Authentication
 
 ⚙️ Prerequisites
-
 Install dependencies:
-
+bash
+Copy code
 pip install -r requirements.txt
-
-
-Create database:
-
+Create MySQL database:
+sql
+Copy code
 CREATE DATABASE warehouse_system;
-
-
-Create .env:
-
+Create .env file:
+ini
+Copy code
 DB_USER=root
 DB_PASS=yourpassword
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=warehouse_system
 JWT_SECRET=supersecret
-
 🗂️ Folder Structure
+css
+Copy code
 app/
  ├── core/
  ├── models/
  ├── routers/
  ├── schemas/
  ├── main.py
-
 🔥 Complete Workflow
 1️⃣ Create Product
-
 POST /products/
 
 2️⃣ Send Goods to Staging
-
 POST /staging/
 
 3️⃣ Approve & Create Batch
-
 POST /batch/
 
 4️⃣ Allocate Batch to Pallet
-
 POST /batch_pallet/
 
 5️⃣ Add Pricing
-
 POST /price/
 
 6️⃣ Add Consumer
-
 POST /consumer/
 
 7️⃣ Make a Sale
-
 POST /sales/
 
-System will:
+System will automatically:
 
 Deduct using FIFO/FEFO
 
 Update batch + pallet
 
-Auto clean empty pallets
+Auto-clean empty pallets
 
 🚀 Future Enhancements
+AI-powered stock forecasting
 
-AI-based stock forecasting
-
-Barcode/QR label printing
+Barcode / QR code printing
 
 Warehouse-to-warehouse transfer
 
-Expiry alerts
+Expiry alerts & notifications
 
 <div align="center">
 ⭐ If this project helps you, please give it a GitHub Star!
-
 Your support motivates future updates 😊
 
 </div> ```
