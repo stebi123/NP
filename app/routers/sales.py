@@ -52,7 +52,7 @@ def create_sale(
         bp.quantity_left -= deduct
 
         # Deduct from batch
-        batch = db.query(Batch).filter(Batch.batch_no == bp.batch_no).first()
+        batch = db.query(Batch).filter(Batch.id == bp.batch_id).first()
         batch.quantity -= deduct
 
         # Create sales entry
