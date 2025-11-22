@@ -6,7 +6,7 @@ class Pallet(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     pallet_id = Column(String(100), unique=True, nullable=False)
-    batch_id = Column(Integer, ForeignKey("batch.id"), nullable=False)
+    # batch_id = Column(Integer, ForeignKey("batch.id"), nullable=False)
     dimensions = Column(String(100))
     capacity = Column(Float)
     warehouse_id = Column(Integer, ForeignKey("warehouse.id"))
