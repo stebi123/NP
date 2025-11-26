@@ -20,9 +20,26 @@ def create_products(
 ):
     new_products = []
     for product in products:
+        
+        # Validate brand
+        brand = db.query(models.Brand).filter(models.Brand.id == product.brand_id).first()
+        if not brand:
+            raise HTTPException(400, "Brand does not exist")
+
+        # Ensure uniqueness
+        exists = db.query(models.Product).filter(
+            (models.Product.prod_id == product.prod_id) |
+            (models.Product.sku == product.sku) |
+            (models.Product.upc == product.upc)
+        ).first()
+
+        if exists:
+            raise HTTPException(400, "Product with same prod_id/sku/upc exists")
+
         new_prod = models.Product(**product.dict())
         db.add(new_prod)
         new_products.append(new_prod)
+        
     db.commit()
     for prod in new_products:
         db.refresh(prod)

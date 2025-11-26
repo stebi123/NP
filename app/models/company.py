@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class Company(Base):
@@ -6,4 +7,6 @@ class Company(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    warehouse_id = Column(Integer)
+
+    # reverse relation
+    brands = relationship("Brand", back_populates="company")

@@ -65,6 +65,7 @@ def update_brand(
         raise HTTPException(status_code=404, detail="Brand not found")
 
     brand.name = updated_brand.name
+    brand.company_id = updated_brand.company_id
     db.commit()
     db.refresh(brand)
     return brand

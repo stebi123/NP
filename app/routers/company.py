@@ -65,7 +65,6 @@ def update_company(
         raise HTTPException(status_code=404, detail="Company not found")
 
     company.name = updated_data.name
-    company.warehouse_id = updated_data.warehouse_id
 
     db.commit()
     db.refresh(company)
