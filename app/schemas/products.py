@@ -22,10 +22,10 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
-
 # Schema for reading product data (response model)
 class ProductResponse(ProductBase):
     id: int
+    image_url: Optional[str] = None
 
     class Config:
         from_attributes = True

@@ -17,7 +17,8 @@ class Product(Base):
     status = Column(Boolean, default=True)
     expiry_in_months = Column(Integer)
     upc = Column(String(100), unique=True)
-    sku = Column(String(50), unique=True, nullable=False)  # new field
+    sku = Column(String(50), unique=True, nullable=False) 
+    image_path = Column(String(500), nullable=True)
 
     # Relationships can be defined here if needed   
     brand = relationship("Brand", back_populates="products")

@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from app.models import products as models
 from app.schemas import products as schemas
+from app.core.config import settings
 from app.core.security import get_current_user  #  assuming you already have JWT auth here
 from app.core.database import get_db
 from typing import List
+import os
+from fastapi.responses import FileResponse
 
 router = APIRouter(
     prefix="/products",
@@ -50,15 +53,6 @@ def create_products(
 def get_products(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     products = db.query(models.Product).all()
     return products
-
-
-# #  Get single product by ID
-# @router.get("/{product_id}", response_model=schemas.ProductResponse)
-# def get_product(product_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-#     product = db.query(models.Product).filter(models.Product.id == product_id).first()
-#     if not product:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
-#     return product
 
 #  Get single product or filtered search
 @router.get("/filter", response_model=List[schemas.ProductResponse])
@@ -122,3 +116,56 @@ def delete_product(product_id: int, db: Session = Depends(get_db), current_user:
     db.delete(product)
     db.commit()
     return {"detail": "Product deleted successfully"}
+
+# Upload product image
+@router.post("/{product_id}/upload-image")
+async def upload_product_image(
+    product_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    # Find product
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not product:
+        raise HTTPException(404, "Product not found")
+
+    # Extract file extension
+    ext = file.filename.split(".")[-1]
+    filename = f"product_{product_id}.{ext}"
+
+    # Correct upload folder from config
+    file_path = settings.UPLOAD_FOLDER / filename
+
+    # Save the file
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+
+    # Store relative URL path in DB (best practice)
+    product.image_path = f"products/{filename}"
+    db.commit()
+
+    return {
+        "message": "Image uploaded successfully",
+        "image_url": f"/products/{product_id}/image"
+    }
+
+#retrieve product image
+@router.get("/{product_id}/image")
+def get_product_image(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+
+    if not product or not product.image_path:
+        raise HTTPException(404, "Image not found")
+
+    # Build full absolute path
+    file_path = settings.BASE_DIR / "uploads" / product.image_path
+
+    if not os.path.exists(file_path):
+        raise HTTPException(404, "File not found on server")
+
+    return FileResponse(file_path)
