@@ -9,13 +9,13 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-# ✅ Models
+#  Models
 class UserCreate(BaseModel):
     username: str
     email: str
     password: str
 
-# ✅ Register
+#  Register
 @router.post("/register")
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.username == user.username).first()
@@ -29,7 +29,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return {"message": "User registered successfully"}
 
-# ✅ Login (works perfectly with Swagger)
+#  Login (works perfectly with Swagger)
 @router.post("/login")
 def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == form_data.username).first()

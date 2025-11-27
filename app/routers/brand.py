@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["Brands"]
 )
 
-# ✅ Create Brand
+#  Create Brand
 @router.post("/", response_model=BrandResponse, status_code=status.HTTP_201_CREATED)
 def create_brand(
     brand: BrandCreate,
@@ -30,7 +30,7 @@ def create_brand(
     return new_brand
 
 
-# ✅ Get all Brands
+#  Get all Brands
 @router.get("/", response_model=List[BrandResponse])
 def get_brands(
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ def get_brands(
     return db.query(Brand).all()
 
 
-# ✅ Get Brand by ID
+#  Get Brand by ID
 @router.get("/{brand_id}", response_model=BrandResponse)
 def get_brand(
     brand_id: int,
@@ -52,7 +52,7 @@ def get_brand(
     return brand
 
 
-# ✅ Update Brand
+#  Update Brand
 @router.put("/{brand_id}", response_model=BrandResponse)
 def update_brand(
     brand_id: int,
@@ -71,7 +71,7 @@ def update_brand(
     return brand
 
 
-# ✅ Delete Brand
+#  Delete Brand
 @router.delete("/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_brand(
     brand_id: int,

@@ -12,7 +12,7 @@
 # # Create a DB session
 # db = SessionLocal()
 
-# # ✅ 1. Create a product
+# #  1. Create a product
 # new_product = Product(
 #     prod_id="PROD001",
 #     name="Sample Widget",
@@ -31,6 +31,6 @@
 
 # print("Inserted product ID:", new_product.id)
 
-# # ✅ 2. Test schema mapping
+# #  2. Test schema mapping
 # product_schema = ProductResponse.from_orm(new_product)
 # print(product_schema)

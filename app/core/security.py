@@ -25,9 +25,9 @@ pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-# -------------------------------
+
 # 🔐 Token Creation & Verification
-# -------------------------------
+
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Create a new JWT access token."""
     to_encode = data.copy()
@@ -46,9 +46,9 @@ def decode_access_token(token: str) -> dict | None:
         return None
 
 
-# -------------------------------
+
 # 🔑 Password Hashing Utilities
-# -------------------------------
+
 def hash_password(password: str) -> str:
     """Hash password using Argon2."""
     return pwd_context.hash(password)
@@ -59,9 +59,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# -------------------------------
+
 # 👤 Auth Dependency for Routes
-# -------------------------------
+
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     """
     Extract the current logged-in user from JWT token.

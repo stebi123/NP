@@ -12,4 +12,3 @@ class Batch(Base):
     quantity = Column(Integer)
     status = Column(Boolean, default=True)
     sku = Column(String(50), nullable=False)
-    invoice_id = Column(Integer, ForeignKey("invoice.id"))

@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["Companies"]
 )
 
-# ✅ Create a new company
+#  Create a new company
 @router.post("/", response_model=CompanyResponse, status_code=status.HTTP_201_CREATED)
 def create_company(
     company: CompanyCreate,
@@ -30,7 +30,7 @@ def create_company(
     return new_company
 
 
-# ✅ Get all companies
+#  Get all companies
 @router.get("/", response_model=List[CompanyResponse])
 def get_companies(
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ def get_companies(
     return db.query(Company).all()
 
 
-# ✅ Get company by ID
+#  Get company by ID
 @router.get("/{company_id}", response_model=CompanyResponse)
 def get_company(
     company_id: int,
@@ -52,7 +52,7 @@ def get_company(
     return company
 
 
-# ✅ Update company
+#  Update company
 @router.put("/{company_id}", response_model=CompanyResponse)
 def update_company(
     company_id: int,
@@ -71,7 +71,7 @@ def update_company(
     return company
 
 
-# ✅ Delete company
+#  Delete company
 @router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_company(
     company_id: int,

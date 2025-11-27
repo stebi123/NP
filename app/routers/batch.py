@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-# ✅ Create a new batch
+#  Create a new batch
 @router.post("/", response_model=List[schemas.BatchResponse])
 def create_batches(
     batches: List[schemas.BatchCreate],
@@ -46,7 +46,7 @@ def create_batches(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ✅ Get all batches
+#  Get all batches
 @router.get("/", response_model=list[schemas.BatchResponse])
 def get_batches(
     db: Session = Depends(get_db),
@@ -55,7 +55,7 @@ def get_batches(
     return db.query(models.Batch).all()
 
 
-# ✅ Get batch by ID
+#  Get batch by ID
 @router.get("/{batch_id}", response_model=schemas.BatchResponse)
 def get_batch(
     batch_id: int,
@@ -68,7 +68,7 @@ def get_batch(
     return batch
 
 
-# ✅ Update batch
+#  Update batch
 @router.put("/{batch_id}", response_model=schemas.BatchResponse)
 def update_batch(
     batch_id: int,
@@ -88,7 +88,7 @@ def update_batch(
     return batch
 
 
-# ✅ Delete batch
+#  Delete batch
 @router.delete("/{batch_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_batch(
     batch_id: int,

@@ -14,7 +14,7 @@ router = APIRouter(
     tags=["Batch-Pallet Mapping"]
 )
 
-# ✅ Create batch-pallet record
+#  Create batch-pallet record
 @router.post("/", response_model=BatchPalletResponse)
 def create_batch_pallet(
     data: BatchPalletCreate,
@@ -53,7 +53,7 @@ def create_batch_pallet(
     return new_entry
 
 
-# ✅ Get all
+#  Get all
 @router.get("/", response_model=List[BatchPalletResponse])
 def get_all(
     db: Session = Depends(get_db),
@@ -62,7 +62,7 @@ def get_all(
     return db.query(BatchPallet).all()
 
 
-# ✅ Get by ID
+#  Get by ID
 @router.get("/{id}", response_model=BatchPalletResponse)
 def get_one(
     id: int,
@@ -75,7 +75,7 @@ def get_one(
     return bp
 
 
-# ✅ Update
+#  Update
 @router.put("/{id}", response_model=BatchPalletResponse)
 def update(
     id: int,
@@ -100,7 +100,7 @@ def update(
     return bp
 
 
-# ✅ Delete
+#  Delete
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(
     id: int,

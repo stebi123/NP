@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Pallets"]
 )
 
-# ✅ Create Pallet
+#  Create Pallet
 @router.post("/", response_model=PalletResponse, status_code=status.HTTP_201_CREATED)
 def create_pallet(
     pallet: PalletCreate,
@@ -38,7 +38,7 @@ def create_pallet(
     return new_pallet
 
 
-# ✅ Get all Pallets
+#  Get all Pallets
 @router.get("/", response_model=List[PalletResponse])
 def get_pallets(
     db: Session = Depends(get_db),
@@ -47,7 +47,7 @@ def get_pallets(
     return db.query(Pallet).all()
 
 
-# ✅ Get Pallet by ID
+#  Get Pallet by ID
 @router.get("/{pallet_id}", response_model=PalletResponse)
 def get_pallet(
     pallet_id: int,
@@ -60,7 +60,7 @@ def get_pallet(
     return pallet
 
 
-# ✅ Update Pallet
+#  Update Pallet
 @router.put("/{pallet_id}", response_model=PalletResponse)
 def update_pallet(
     pallet_id: int,
@@ -86,7 +86,7 @@ def update_pallet(
     return pallet
 
 
-# ✅ Delete Pallet
+#  Delete Pallet
 @router.delete("/{pallet_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pallet(
     pallet_id: int,

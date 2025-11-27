@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Prices"]
 )
 
-# ✅ Create price
+#  Create price
 @router.post("/", response_model=PriceResponse)
 def create_price(
     price: PriceCreate,
@@ -32,7 +32,7 @@ def create_price(
     return new_price
 
 
-# ✅ Get all prices
+#  Get all prices
 @router.get("/", response_model=List[PriceResponse])
 def get_prices(
     db: Session = Depends(get_db),
@@ -41,7 +41,7 @@ def get_prices(
     return db.query(Price).all()
 
 
-# ✅ Get price by ID
+#  Get price by ID
 @router.get("/{price_id}", response_model=PriceResponse)
 def get_price(
     price_id: int,
@@ -54,7 +54,7 @@ def get_price(
     return price
 
 
-# ✅ Update price
+#  Update price
 @router.put("/{price_id}", response_model=PriceResponse)
 def update_price(
     price_id: int,

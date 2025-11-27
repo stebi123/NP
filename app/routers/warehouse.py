@@ -13,7 +13,7 @@ router = APIRouter(
 )
 
 
-# ✅ Create Warehouse
+#  Create Warehouse
 @router.post("/", response_model=WarehouseResponse, status_code=status.HTTP_201_CREATED)
 def create_warehouse(
     warehouse: WarehouseCreate,
@@ -27,7 +27,7 @@ def create_warehouse(
     return new_wh
 
 
-# ✅ Get all Warehouses
+#  Get all Warehouses
 @router.get("/", response_model=List[WarehouseResponse])
 def get_all_warehouses(
     db: Session = Depends(get_db),
@@ -36,7 +36,7 @@ def get_all_warehouses(
     return db.query(Warehouse).all()
 
 
-# ✅ Get Warehouse by ID
+#  Get Warehouse by ID
 @router.get("/{warehouse_id}", response_model=WarehouseResponse)
 def get_warehouse(
     warehouse_id: int,
@@ -49,7 +49,7 @@ def get_warehouse(
     return wh
 
 
-# ✅ Update Warehouse
+#  Update Warehouse
 @router.put("/{warehouse_id}", response_model=WarehouseResponse)
 def update_warehouse(
     warehouse_id: int,

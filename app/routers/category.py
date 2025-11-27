@@ -12,7 +12,7 @@ router = APIRouter(
     tags=["Categories"]
 )
 
-# ✅ Create Category
+#  Create Category
 @router.post("/", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_category(
     category: CategoryCreate,
@@ -30,7 +30,7 @@ def create_category(
     return new_category
 
 
-# ✅ Get all Categories
+#  Get all Categories
 @router.get("/", response_model=List[CategoryResponse])
 def get_categories(
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ def get_categories(
     return db.query(Category).all()
 
 
-# ✅ Get Category by ID
+#  Get Category by ID
 @router.get("/{category_id}", response_model=CategoryResponse)
 def get_category(
     category_id: int,
@@ -52,7 +52,7 @@ def get_category(
     return category
 
 
-# ✅ Update Category
+#  Update Category
 @router.put("/{category_id}", response_model=CategoryResponse)
 def update_category(
     category_id: int,
@@ -70,7 +70,7 @@ def update_category(
     return category
 
 
-# ✅ Delete Category
+#  Delete Category
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
     category_id: int,

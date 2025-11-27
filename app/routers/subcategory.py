@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["Subcategories"]
 )
 
-# ✅ Create Subcategory
+#  Create Subcategory
 @router.post("/", response_model=SubCategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_subcategory(
     subcategory: SubCategoryCreate,
@@ -41,7 +41,7 @@ def create_subcategory(
     return new_subcategory
 
 
-# ✅ Get all Subcategories
+#  Get all Subcategories
 @router.get("/", response_model=List[SubCategoryResponse])
 def get_subcategories(
     db: Session = Depends(get_db),
@@ -50,7 +50,7 @@ def get_subcategories(
     return db.query(SubCategory).all()
 
 
-# ✅ Get Subcategory by ID
+#  Get Subcategory by ID
 @router.get("/{subcategory_id}", response_model=SubCategoryResponse)
 def get_subcategory(
     subcategory_id: int,
@@ -63,7 +63,7 @@ def get_subcategory(
     return subcategory
 
 
-# ✅ Update Subcategory
+#  Update Subcategory
 @router.put("/{subcategory_id}", response_model=SubCategoryResponse)
 def update_subcategory(
     subcategory_id: int,
@@ -88,7 +88,7 @@ def update_subcategory(
     return subcategory
 
 
-# ✅ Delete Subcategory
+#  Delete Subcategory
 @router.delete("/{subcategory_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_subcategory(
     subcategory_id: int,
