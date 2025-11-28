@@ -3,7 +3,7 @@ from pydantic import Field
 from pathlib import Path
 
 class Settings(BaseSettings):
-    SECRET_KEY: str
+    JWT_SECRET: str = Field(alias="JWT_SECRET")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     DATABASE_URL: str
     JWT_ALGORITHM: str
