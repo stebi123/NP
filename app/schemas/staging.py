@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 from enum import Enum
 
@@ -14,14 +14,14 @@ class StagingBase(BaseModel):
     product_id: int
     warehouse_id: int
     invoice_no: str
-    received_on: Optional[datetime] = None
-    total_quantity: Optional[int] = 0
+    received_on: date
+    total_quantity: int
 
 # Schema for creating a staging entry
 # QC fields are automatically set and not allowed from client
 class StagingCreate(StagingBase):
     qc_status: QCStatus = QCStatus.HOLD
-    qc_done_on: Optional[datetime] = None
+    qc_done_on: datetime
     approved_quantity: int = 0
     rejected_quantity: int = 0
 
@@ -43,3 +43,4 @@ class StagingResponse(StagingBase):
 
     class Config:
         from_attributes = True
+        use_enum_values = True

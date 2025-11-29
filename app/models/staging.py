@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum, Date
 from sqlalchemy.sql import func
 from app.core.database import Base
 import enum
 
 # Enum for QC status
 class QCStatus(enum.Enum):
-    HOLD = 1
-    APPROVED = 2
-    REJECTED = 3
+    HOLD = "HOLD"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
 
 class Staging(Base):
     __tablename__ = "staging"
@@ -22,7 +22,7 @@ class Staging(Base):
     invoice_no = Column(String(50), nullable=False, index=True)
     
     # Date received
-    received_on = Column(DateTime(timezone=True), server_default=func.now())
+    received_on = Column(Date, nullable=False)
     
     # QC fields
     qc_status = Column(Enum(QCStatus), default=QCStatus.HOLD)
