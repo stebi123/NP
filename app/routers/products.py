@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
-from app.models import products as models
+from app.models.products import Product
+from app.models.brand import Brand
+from app.models.category import Category
+from app.models.subcategory import SubCategory
 from app.schemas import products as schemas
 from app.core.config import settings
 from app.core.security import get_current_user  #  assuming you already have JWT auth here
@@ -25,21 +28,21 @@ def create_products(
     for product in products:
         
         # Validate brand
-        brand = db.query(models.Brand).filter(models.Brand.id == product.brand_id).first()
+        brand = db.query(Brand).filter(Brand.id == product.brand_id).first()
         if not brand:
             raise HTTPException(400, "Brand does not exist")
 
         # Ensure uniqueness
-        exists = db.query(models.Product).filter(
-            (models.Product.prod_id == product.prod_id) |
-            (models.Product.sku == product.sku) |
-            (models.Product.upc == product.upc)
+        exists = db.query(Product).filter(
+            (Product.prod_id == product.prod_id) |
+            (Product.sku == product.sku) |
+            (Product.upc == product.upc)
         ).first()
 
         if exists:
             raise HTTPException(400, "Product with same prod_id/sku/upc exists")
 
-        new_prod = models.Product(**product.dict())
+        new_prod = Product(**product.dict())
         db.add(new_prod)
         new_products.append(new_prod)
         
@@ -51,7 +54,7 @@ def create_products(
 #  Get all products
 @router.get("/", response_model=list[schemas.ProductResponse])
 def get_products(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    products = db.query(models.Product).all()
+    products = db.query(Product).all()
     return products
 
 #  Get single product or filtered search
@@ -72,20 +75,20 @@ def get_products(
     Example: /products/filter?brand_id=1&category_id=2
     """
 
-    query = db.query(models.Product)
+    query = db.query(Product)
 
     if prod_id:
-        query = query.filter(models.Product.prod_id == prod_id)
+        query = query.filter(Product.prod_id == prod_id)
     if brand_id:
-        query = query.filter(models.Product.brand_id == brand_id)
+        query = query.filter(Product.brand_id == brand_id)
     if name:
-        query = query.filter(models.Product.name.ilike(f"%{name}%"))
+        query = query.filter(Product.name.ilike(f"%{name}%"))
     if category_id:
-        query = query.filter(models.Product.category_id == category_id)
+        query = query.filter(Product.category_id == category_id)
     if subcategory_id:
-        query = query.filter(models.Product.subcategory_id == subcategory_id)
+        query = query.filter(Product.subcategory_id == subcategory_id)
     if sku:
-        query = query.filter(models.Product.sku == sku)
+        query = query.filter(Product.sku == sku)
 
     products = query.all()
 
@@ -97,7 +100,7 @@ def get_products(
 #  Update product by ID
 @router.put("/{product_id}", response_model=schemas.ProductResponse)
 def update_product(product_id: int, updated_data: schemas.ProductCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     for key, value in updated_data.dict().items():
@@ -110,7 +113,7 @@ def update_product(product_id: int, updated_data: schemas.ProductCreate, db: Ses
 #  Delete product
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(product_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     db.delete(product)
@@ -126,7 +129,7 @@ async def upload_product_image(
     current_user: dict = Depends(get_current_user)
 ):
     # Find product
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(404, "Product not found")
 
@@ -157,7 +160,7 @@ def get_product_image(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
-    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product or not product.image_path:
         raise HTTPException(404, "Image not found")
