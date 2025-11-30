@@ -8,6 +8,7 @@ from app.models.pallet import Pallet
 from app.models.consumer import Consumer
 from app.models.products import Product
 from app.models.batch_pallet import BatchPallet
+from sqlalchemy import func
 
 from app.schemas.sales import SaleCreate, SaleResponse
 from app.core.database import get_db
@@ -122,3 +123,100 @@ def update_sale(
 @router.delete("/{sale_id}", status_code=400)
 def delete_sale_blocked():
     return {"detail": "Sale deletion is blocked to prevent stock corruption."}
+
+#get total stock for a product
+
+@router.get("/stock/total/{product_id}")
+def get_total_stock_only(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    # Validate product
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(404, "Product not found")
+
+    # Get all batches
+    batches = db.query(Batch).filter(Batch.product_id == product_id).all()
+    if not batches:
+        return {
+            "product_id": product_id,
+            "product_name": product.name,
+            "total_stock": 0
+        }
+
+    batch_ids = [b.id for b in batches]
+
+    # Get stock from BatchPallet
+    total_stock = (
+        db.query(func.sum(BatchPallet.quantity_left))
+        .filter(BatchPallet.batch_id.in_(batch_ids))
+        .scalar()
+    ) or 0
+
+    return {
+        "product_id": product_id,
+        "product_name": product.name,
+        "total_stock": total_stock
+    }
+
+
+#get detailed stock for a product
+
+@router.get("/stock/details/{product_id}")
+def get_stock_details(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    # Validate product
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(404, "Product not found")
+
+    # Fetch batches
+    batches = db.query(Batch).filter(Batch.product_id == product_id).all()
+    if not batches:
+        return {
+            "product_id": product_id,
+            "product_name": product.name,
+            "total_stock": 0,
+            "batches": []
+        }
+
+    batch_ids = [b.id for b in batches]
+
+    # Fetch pallet stock entries
+    batch_pallets = (
+        db.query(BatchPallet)
+        .filter(BatchPallet.batch_id.in_(batch_ids))
+        .all()
+    )
+
+    total_stock = sum(bp.quantity_left for bp in batch_pallets)
+
+    detailed = []
+    for batch in batches:
+        pallets_for_batch = [
+            {
+                "pallet_id": bp.pallet_id,
+                "quantity_left": bp.quantity_left,
+                "stored_on": bp.stored_on
+            }
+            for bp in batch_pallets if bp.batch_id == batch.id
+        ]
+
+        detailed.append({
+            "batch_id": batch.id,
+            "batch_no": batch.batch_no,
+            "batch_total": sum(p["quantity_left"] for p in pallets_for_batch),
+            "pallets": pallets_for_batch
+        })
+
+    return {
+        "product_id": product_id,
+        "product_name": product.name,
+        "total_stock": total_stock,
+        "batches": detailed
+    }

@@ -34,3 +34,6 @@ app.include_router(sales.router)
 app.include_router(staging.router)
 app.include_router(subcategory.router)
 app.include_router(warehouse.router)
+
+# from fastapi.staticfiles import StaticFiles
+# app.mount("/static", StaticFiles(directory="static"), name="static")
