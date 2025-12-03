@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class SaleBase(BaseModel):
@@ -20,6 +20,9 @@ class SaleResponse(BaseModel):
     quantity_sold: int
     sale_price: Optional[float]
     sale_timestamp: datetime
+    
+class SaleBulkRequest(BaseModel):
+    sales: List[SaleCreate]
 
     class Config:
         from_attributes = True
