@@ -32,4 +32,4 @@ python-multipart
 email-validator
 fastapi-mail
 email-validator
-
+fastapi-mail
