@@ -14,3 +14,4 @@ class User(Base):
     last_login = Column(DateTime(timezone=True))
     is_active = Column(Boolean, default=True)
     role = Column(String(50), default="user")
+    password_changed_at = Column(DateTime(timezone=True), nullable=True)

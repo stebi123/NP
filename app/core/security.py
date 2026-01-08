@@ -17,6 +17,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("JWT_SECRET")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+RESET_TOKEN_EXPIRE_MINUTES = 15
 
 # Password hashing config (using Argon2)
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
@@ -86,3 +87,23 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
 
     return user
+
+def create_password_reset_token(user_id: int) -> str:
+    payload = {
+        "sub": str(user_id),
+        "type": "password_reset",
+        "iat": datetime.utcnow(),
+        "exp": datetime.utcnow() + timedelta(minutes=RESET_TOKEN_EXPIRE_MINUTES),
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+def decode_password_reset_token(token: str) -> int:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+    if payload.get("type") != "password_reset":
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+    return int(payload["sub"])

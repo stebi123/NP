@@ -31,3 +31,5 @@ reportlab
 python-multipart
 email-validator
 fastapi-mail
+email-validator
+

@@ -6,6 +6,11 @@ from app.core.security import hash_password, verify_password
 from app.core.jwt import create_access_token
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from app.schemas.user import ForgotPasswordSchema
+from app.core.security import create_password_reset_token
+from app.core.mail import send_reset_email
+
+
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -38,3 +43,18 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
 
     access_token = create_access_token({"sub": db_user.username})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/forgot-password")
+def forgot_password(
+    data: ForgotPasswordSchema,
+    db: Session = Depends(get_db),
+):
+    user = db.query(User).filter(User.email == data.email).first()
+
+    if user:
+        token = create_password_reset_token(user.id)
+        send_reset_email(user.email, token)  # already handled elsewhere
+
+    return {
+        "message": "If the email exists, a reset link was sent"
+    }
