@@ -81,3 +81,142 @@ Sales are linked to consumers:
 
 ### 💸 **Dynamic Pricing System**
 MRP, MWP — with optional **price history**.
+
+=====================================================================
+
+LOCAL DEVELOPMENT SETUP (FROM SCRATCH)
+
+=====================================================================
+
+PREREQUISITES
+
+Install the following on your system:
+
+- Python 3.11 or higher
+- MySQL 8.0 or higher
+- Git
+
+Verify installation:
+
+python --version
+mysql --version
+git --version
+
+=====================================================================
+
+CLONE THE REPOSITORY
+
+git clone <REPO_URL>
+cd <PROJECT_FOLDER>
+
+=====================================================================
+
+CREATE AND ACTIVATE VIRTUAL ENVIRONMENT
+
+Windows:
+python -m venv virtual
+virtual\Scripts\activate
+
+macOS / Linux:
+python3 -m venv virtual
+source virtual/bin/activate
+
+You should now see (virtual) in your terminal.
+
+=====================================================================
+
+INSTALL DEPENDENCIES
+
+pip install --upgrade pip
+pip install -r requirements.txt
+
+=====================================================================
+
+MYSQL SETUP
+
+Start MySQL Service
+
+Windows:
+net start MySQL80
+
+Linux / macOS:
+sudo service mysql start
+
+Login to MySQL as root:
+
+mysql -u root -p
+
+Create database:
+
+CREATE DATABASE warehouse_db;
+
+Create application user:
+
+CREATE USER 'warehouse_user'@'localhost' IDENTIFIED BY 'warehouse123';
+
+Grant permissions:
+
+GRANT ALL PRIVILEGES ON warehouse_db.* TO 'warehouse_user'@'localhost';
+FLUSH PRIVILEGES;
+
+Verify database access:
+
+Exit MySQL, then run:
+mysql -u warehouse_user -p warehouse_db
+
+If login succeeds, database setup is correct.
+
+=====================================================================
+
+ENVIRONMENT VARIABLES
+
+Create a file named .env in the project root.
+
+Ask the developer for .env content
+
+NOTE:
+.env is ignored via .gitignore and must never be committed.
+
+=====================================================================
+
+RUN THE APPLICATION
+
+Database tables are created automatically on startup.
+
+uvicorn app.main:app --reload
+
+=====================================================================
+
+ACCESS THE APPLICATION
+
+Backend API:
+http://127.0.0.1:8000
+
+Swagger API Docs:
+http://127.0.0.1:8000/docs
+
+=====================================================================
+
+COMMON ISSUES
+
+Database access denied:
+- Check database name in .env
+- Check MySQL GRANT permissions
+
+Module not found:
+- Ensure virtual environment is activated
+
+Environment variables not loading:
+- Ensure .env exists in project root
+
+=====================================================================
+
+STOP THE SERVER
+
+CTRL + C
+
+=====================================================================
+
+SETUP COMPLETE
+
+The backend is now running locally.
